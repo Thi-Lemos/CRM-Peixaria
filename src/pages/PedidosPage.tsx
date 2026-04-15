@@ -12,7 +12,7 @@ type DateFilter = 'todos' | 'hoje' | 'semana' | 'mes'
 
 const STATUS_CONFIG = {
   pendente: { label: 'Pendente', badge: 'badge-pendente' },
-  confirmado: { label: 'Enviado', badge: 'badge-enviado' },
+  enviado: { label: 'Enviado', badge: 'badge-enviado' },
   pronto_retirada: { label: 'Pronto p/ Retirada', badge: 'badge-pronto_retirada' },
   entregue: { label: 'Entregue', badge: 'badge-entregue' },
   cancelado: { label: 'Cancelado', badge: 'badge-cancelado' },
