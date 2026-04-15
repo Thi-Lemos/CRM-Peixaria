@@ -167,7 +167,7 @@ export function DashboardPage() {
   const pedidosEnviados = todayPedidos.filter(p => p.status === 'enviado').length
   const pedidosFinalizados = todayPedidos.filter(p => p.status === 'finalizado').length
   const faturamento = todayPedidos
-    .filter(p => p.status === 'enviado' || p.status === 'entregue')
+    .filter(p => p.status === 'enviado' || p.status === 'finalizado')
     .reduce((sum, p) => sum + Number(p.valor_total), 0)
 
   const metricCards: MetricCard[] = [
