@@ -130,7 +130,7 @@ export function DashboardPage() {
           incrementPendingOrders()
         }
         playNotificationSound()
-        toast.success(`🔔 Novo pedido de ${newPedido.nome_cliente}!`, {
+        toast.success(`🔔 Novo pedido de ${newPedido.nome}!`, {
           duration: 5000,
           position: 'top-right',
         })
@@ -138,7 +138,7 @@ export function DashboardPage() {
         // Push notification
         if ('Notification' in window && Notification.permission === 'granted') {
           new Notification('🔔 Novo Pedido — RJ Peixaria', {
-            body: `Pedido de ${newPedido.nome_cliente} — ${formatCurrency(newPedido.valor_total)}`,
+            body: `Pedido de ${newPedido.nome} — ${formatCurrency(newPedido.valor_total)}`,
             icon: '/favicon.ico',
           })
         }
@@ -280,15 +280,16 @@ export function DashboardPage() {
                 <div
                   key={pedido.id}
                   className="flex items-center gap-3 p-3 rounded-[8px] hover:bg-gray-50 transition-colors"
+
                 >
                   <div className="w-9 h-9 rounded-full bg-[#0A2342]/10 flex items-center justify-center text-[#0A2342] text-xs font-bold shrink-0">
-                    {getInitials(pedido.nome_cliente)}
+                    {getInitials(pedido.nome)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#1A1A2E] truncate">{pedido.nome_cliente}</p>
+                    <p className="text-sm font-medium text-[#1A1A2E] truncate">{pedido.nome}</p>
                     <p className="text-xs text-[#64748B] truncate">
-                      {Array.isArray(pedido.produtos_pedidos) 
-                        ? pedido.produtos_pedidos.map(p => p.produto).join(', ')
+                      {Array.isArray(pedido.itens) 
+                        ? pedido.itens.map(p => p.produto).join(', ')
                         : 'Sem itens'}
                     </p>
                   </div>
@@ -331,11 +332,11 @@ export function DashboardPage() {
                   className="flex items-center gap-3 p-3 rounded-[8px] hover:bg-gray-50 transition-colors"
                 >
                   <div className="w-9 h-9 rounded-full bg-[#0A2342] flex items-center justify-center text-white text-xs font-bold shrink-0">
-                    {getInitials(c.nome_cliente || c.telefone)}
+                    {getInitials(c.nome || c.telefone)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-[#1A1A2E] truncate">
-                      {c.nome_cliente || c.telefone}
+                      {c.nome || c.telefone}
                     </p>
                     <p className="text-xs text-[#64748B]">{c.telefone}</p>
                   </div>
