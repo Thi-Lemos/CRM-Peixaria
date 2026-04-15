@@ -69,10 +69,10 @@ function PedidoModal({ pedido, onClose, onStatusChange }: {
           <div className="border border-[#E2E8F0] rounded-input p-4">
             <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-3">Produtos</p>
             <div className="space-y-2">
-              {typeof pedido.produtos_pedidos === 'string' ? (
-                <p className="text-sm text-[#1A1A2E]">{pedido.produtos_pedidos}</p>
-              ) : Array.isArray(pedido.produtos_pedidos) ? (
-                pedido.produtos_pedidos.map((p: any, i: number) => (
+              {typeof pedido.itens === 'string' ? (
+                <p className="text-sm text-[#1A1A2E]">{pedido.itens}</p>
+              ) : Array.isArray(pedido.itens) ? (
+                pedido.itens.map((p: any, i: number) => (
                   <div key={i} className="flex items-center justify-between text-sm">
                     <span className="text-[#1A1A2E]">{p.produto || p.nome} — {p.quantidade}</span>
                     <span className="font-medium text-[#1A1A2E]">{formatCurrency(p.preco_unit || p.preco || 0)}</span>
@@ -323,9 +323,9 @@ export function PedidosPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      {typeof pedido.produtos_pedidos === 'string' ? (
-                        <p className="text-xs text-[#64748B] max-w-[200px] truncate" title={pedido.produtos_pedidos as string}>
-                          {pedido.produtos_pedidos}
+                      {typeof pedido.itens === 'string' ? (
+                        <p className="text-xs text-[#64748B] max-w-[200px] truncate" title={pedido.itens as string}>
+                          {pedido.itens}
                         </p>
                       ) : (
                         <>
@@ -333,12 +333,12 @@ export function PedidosPage() {
                             onClick={() => setExpandedProdutos(expandedProdutos === pedido.id ? null : pedido.id)}
                             className="flex items-center gap-1 text-[#64748B] hover:text-[#1A1A2E] text-xs"
                           >
-                            {Array.isArray(pedido.produtos_pedidos) ? pedido.produtos_pedidos.length : 0} item(s)
+                            {Array.isArray(pedido.itens) ? pedido.itens.length : 0} item(s)
                             <ChevronDown className={clsx('w-3 h-3 transition-transform', expandedProdutos === pedido.id && 'rotate-180')} />
                           </button>
                           {expandedProdutos === pedido.id && (
                             <div className="mt-1 space-y-0.5">
-                              {Array.isArray(pedido.produtos_pedidos) && pedido.produtos_pedidos.map((p: any, i: number) => (
+                              {Array.isArray(pedido.itens) && pedido.itens.map((p: any, i: number) => (
                                 <p key={i} className="text-xs text-[#64748B]">
                                   • {p.produto || p.nome} ({p.quantidade}) — {formatCurrency(p.preco_unit || p.preco || 0)}
                                 </p>
