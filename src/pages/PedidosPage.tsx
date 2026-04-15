@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
-import type { Pedido, ProdutoPedido } from '../types'
 import { formatCurrency, formatDate, getInitials } from '../utils/helpers'
 import { Search, Eye, ChevronDown, X } from 'lucide-react'
 import toast from 'react-hot-toast'
