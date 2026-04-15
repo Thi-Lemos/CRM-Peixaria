@@ -7,14 +7,14 @@ import { isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns'
 import clsx from 'clsx'
 import { useNotificationStore } from '../store/notificationStore'
 
-type StatusFilter = 'todos' | 'pendente' | 'enviado' | 'pronto_retirada' | 'entregue' | 'cancelado'
+type StatusFilter = 'todos' | 'pendente' | 'enviado' | 'pronto_retirada' | 'finalizado' | 'cancelado'
 type DateFilter = 'todos' | 'hoje' | 'semana' | 'mes'
 
 const STATUS_CONFIG = {
   pendente: { label: 'Pendente', badge: 'badge-pendente' },
   enviado: { label: 'Enviado', badge: 'badge-enviado' },
   pronto_retirada: { label: 'Pronto p/ Retirada', badge: 'badge-pronto_retirada' },
-  entregue: { label: 'Entregue', badge: 'badge-entregue' },
+  finalizado: { label: 'Finalizado', badge: 'badge-finalizado' },
   cancelado: { label: 'Cancelado', badge: 'badge-cancelado' },
 }
 
@@ -22,7 +22,7 @@ const STATUS_OPTIONS = [
   { value: 'pendente', label: 'Pendente' },
   { value: 'enviado', label: 'Enviado' },
   { value: 'pronto_retirada', label: 'Pronto p/ Retirada' },
-  { value: 'entregue', label: 'Entregue' },
+  { value: 'finalizado', label: 'Finalizado' },
   { value: 'cancelado', label: 'Cancelado' },
 ]
 
