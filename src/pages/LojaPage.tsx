@@ -116,17 +116,7 @@ export function LojaPage() {
     setConfig(prev => ({ ...prev, servicos: (prev.servicos || []).filter((_, idx) => idx !== i) }))
   }
 
-  const addFormaPgto = () => {
-    if (!novaFormaPgto.trim()) return
-    setConfig(prev => ({ ...prev, formas_pagamento: [...(prev.formas_pagamento || []), novaFormaPgto.trim()] }))
-    setNovaFormaPgto('')
-  }
-
-  const removeFormaPgto = (i: number) => {
-    setConfig(prev => ({ ...prev, formas_pagamento: (prev.formas_pagamento || []).filter((_, idx) => idx !== i) }))
-  }
-
-  const addPix = () => {
+    const addPix = () => {
     if (!novaPixTipo.trim() || !novaPixChave.trim()) return
     setConfig(prev => ({
       ...prev,
