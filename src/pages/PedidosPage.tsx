@@ -55,12 +55,12 @@ function PedidoModal({ pedido, onClose, onStatusChange }: {
           {/* Cliente */}
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-[#0A2342] flex items-center justify-center text-white font-bold">
-              {getInitials(pedido.nome_cliente)}
+              {getInitials(pedido.nome)}
             </div>
             <div>
-              <p className="font-semibold text-[#1A1A2E]">{pedido.nome_cliente}</p>
-              {pedido.telefone_cliente && (
-                <p className="text-sm text-[#64748B]">{pedido.telefone_cliente}</p>
+              <p className="font-semibold text-[#1A1A2E]">{pedido.nome}</p>
+              {pedido.telefone && (
+                <p className="text-sm text-[#64748B]">{pedido.telefone}</p>
               )}
             </div>
           </div>
@@ -90,10 +90,10 @@ function PedidoModal({ pedido, onClose, onStatusChange }: {
 
           {/* Info */}
           <div className="grid grid-cols-2 gap-3 text-sm">
-            {pedido.forma_pagamento && (
+            {pedido.pagamento && (
               <div>
                 <p className="text-xs text-[#64748B] mb-0.5">Pagamento</p>
-                <p className="font-medium text-[#1A1A2E]">{pedido.forma_pagamento}</p>
+                <p className="font-medium text-[#1A1A2E]">{pedido.pagamento}</p>
               </div>
             )}
             {pedido.endereco_entrega && (
@@ -188,7 +188,7 @@ export function PedidosPage() {
         setPedidos(prev => [newPedido, ...prev])
         incrementPendingOrders()
         playNotificationSound()
-        toast.success(`🔔 Novo pedido de ${newPedido.nome_cliente}!`)
+        toast.success(`🔔 Novo pedido de ${newPedido.nome}!`)
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos' }, (payload) => {
         setPedidos(prev => prev.map(p => p.id === payload.new.id ? payload.new as Pedido : p))
@@ -214,7 +214,7 @@ export function PedidosPage() {
     }
     if (search.trim()) {
       const q = search.toLowerCase()
-      result = result.filter(p => p.nome_cliente.toLowerCase().includes(q))
+      result = result.filter(p => p.nome.toLowerCase().includes(q))
     }
     setFiltered(result)
   }, [pedidos, statusFilter, dateFilter, search])
@@ -240,7 +240,8 @@ export function PedidosPage() {
     <div className="p-6 lg:p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[#1A1A2E]">Pedidos</h1>
-        <p className="text-[#64748B] text-sm mt-1">{filtered.length} pedido{filtered.length !== 1 ? 's' : ''} encontrado{filtered.length !== 1 ? 's' : ''}</p>
+        <p className="text-[#64748B]
+ text-sm mt-1">{filtered.length} pedido{filtered.length !== 1 ? 's' : ''} encontrado{filtered.length !== 1 ? 's' : ''}</p>
       </div>
 
       {/* Filters */}
@@ -311,12 +312,12 @@ export function PedidosPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-[#0A2342]/10 flex items-center justify-center text-[#0A2342] text-xs font-bold shrink-0">
-                          {getInitials(pedido.nome_cliente)}
+                          {getInitials(pedido.nome)}
                         </div>
                         <div>
-                          <p className="font-medium text-[#1A1A2E]">{pedido.nome_cliente}</p>
-                          {pedido.telefone_cliente && (
-                            <p className="text-xs text-[#64748B]">{pedido.telefone_cliente}</p>
+                          <p className="font-medium text-[#1A1A2E]">{pedido.nome}</p>
+                          {pedido.telefone && (
+                            <p className="text-xs text-[#64748B]">{pedido.telefone}</p>
                           )}
                         </div>
                       </div>
@@ -351,7 +352,7 @@ export function PedidosPage() {
                       <span className="font-semibold text-[#FF6B1A]">{formatCurrency(pedido.valor_total)}</span>
                     </td>
                     <td className="px-4 py-3 text-[#64748B]">
-                      {pedido.forma_pagamento || '—'}
+                      {pedido.pagamento || '—'}
                     </td>
                     <td className="px-4 py-3">
                       <span className={clsx(STATUS_CONFIG[pedido.status]?.badge || 'badge-pendente')}>
