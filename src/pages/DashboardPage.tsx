@@ -71,17 +71,17 @@ function MetricCardComponent({ card }: { card: MetricCard }) {
 
 const STATUS_BADGE: Record<string, string> = {
   pendente: 'badge-pendente',
-  confirmado: 'badge-confirmado',
+  enviado: 'badge-enviado',
   pronto_retirada: 'badge-pronto_retirada',
-  entregue: 'badge-entregue',
+  finalizado: 'badge-finalizado',
   cancelado: 'badge-cancelado',
 }
 
 const STATUS_LABEL: Record<string, string> = {
   pendente: 'Pendente',
-  confirmado: 'Confirmado',
+  enviado: 'Enviado',
   pronto_retirada: 'Pronto p/ Retirada',
-  entregue: 'Entregue',
+  finalizado: 'Finalizado',
   cancelado: 'Cancelado',
 }
 
@@ -164,9 +164,10 @@ export function DashboardPage() {
   const pedidosForaHorario = todayPedidos.length - pedidosDentroHorario;
   
   const pedidosPendentes = todayPedidos.filter(p => p.status === 'pendente').length
-  const pedidosConfirmados = todayPedidos.filter(p => p.status === 'confirmado').length
+  const pedidosEnviados = todayPedidos.filter(p => p.status === 'enviado').length
+  const pedidosFinalizados = todayPedidos.filter(p => p.status === 'finalizado').length
   const faturamento = todayPedidos
-    .filter(p => p.status === 'confirmado' || p.status === 'entregue')
+    .filter(p => p.status === 'enviado' || p.status === 'entregue')
     .reduce((sum, p) => sum + Number(p.valor_total), 0)
 
   const metricCards: MetricCard[] = [
@@ -192,12 +193,12 @@ export function DashboardPage() {
       icon: AlertTriangle,
       iconBg: 'bg-orange-50',
       iconColor: 'text-orange-500',
-      badge: { label: 'Off-hours', color: 'bg-orange-100 text-orange-700' },
+      badge: { label: 'Fora do Horário', color: 'bg-orange-100 text-orange-700' },
     },
     {
       title: 'Pedidos Hoje',
       value: todayPedidos.length,
-      subInfo: `${pedidosPendentes} pendentes • ${pedidosConfirmados} confirmados`,
+      subInfo: `${pedidosPendentes} pendentes • ${pedidosFinalizados} finalizados`,
       icon: ShoppingBag,
       iconBg: 'bg-purple-50',
       iconColor: 'text-purple-600',
