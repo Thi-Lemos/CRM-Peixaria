@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { isToday, parseISO } from 'date-fns'
+import { isToday, parseISO, startOfDay } from 'date-fns'
 
 // Notificação sonora
 function playNotificationSound() {
@@ -64,7 +64,7 @@ function MetricCardComponent({ card }: { card: MetricCard }) {
           </span>
         )}
       </div>
-      <p className="text-3xl font-bold text-[#1A1A2E] mb-1">{card.value}</p>
+      <p className="text-3xl font-bold text-[#1A1A2E] mb-1">{card.value ?? 0}</p>
       <p className="text-sm font-medium text-[#64748B]">{card.title}</p>
       {card.subInfo && (
         <p className="text-xs text-[#94A3B8] mt-1">{card.subInfo}</p>
@@ -102,8 +102,8 @@ export function DashboardPage() {
     setLoading(true)
     try {
       const [pedidosRes, atendimentosRes, conversasRes] = await Promise.all([
-        supabase.from('pedidos').select('*').order('created_at', { ascending: false }).limit(10),
-        supabase.from('atendimentos').select('*').order('data_atendimento', { ascending: false }),
+        supabase.from('pedidos').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('atendimentos').select('*').order('data_atendimento', { ascending: false }).limit(200),
         supabase.from('conversas').select('*').order('updated_at', { ascending: false }).limit(5),
       ])
 
