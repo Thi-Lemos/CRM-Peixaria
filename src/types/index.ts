@@ -14,7 +14,7 @@ export interface ProdutoPedido {
 }
 
 export interface Pedido {
-  id: string
+  pedido_id: string
   nome: string
   telefone?: string
   itens: string | any[]

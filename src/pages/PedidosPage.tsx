@@ -37,7 +37,7 @@ function PedidoModal({ pedido, onClose, onStatusChange }: {
 
   const handleStatusChange = async (newStatus: string) => {
     setSaving(true)
-    await onStatusChange(pedido.id, newStatus)
+    await onStatusChange(pedido.pedido_id, newStatus)
     setCurrentStatus(newStatus as Pedido['status'])
     setSaving(false)
   }
@@ -196,7 +196,7 @@ export function PedidosPage() {
         toast.success(`🔔 Novo pedido de ${newPedido.nome}!`)
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos' }, (payload) => {
-        setPedidos(prev => prev.map(p => p.id === payload.new.id ? payload.new as Pedido : p))
+        setPedidos(prev => prev.map(p => p.pedido_id === payload.new.pedido_id ? payload.new as Pedido : p))
       })
       .subscribe()
 
@@ -238,14 +238,14 @@ export function PedidosPage() {
     const { error } = await supabase
       .from('pedidos')
       .update({ status, updated_at: new Date().toISOString() })
-      .eq('id', id)
+      .eq('pedido_id', id)
 
     if (error) {
-      toast.error('Erro ao atualizar status')
+      toast.error('Erro ao atualizar status: ' + error.message)
     } else {
-      setPedidos(prev => prev.map(p => p.id === id ? { ...p, status: status as Pedido['status'] } : p))
+      setPedidos(prev => prev.map(p => p.pedido_id === id ? { ...p, status: status as Pedido['status'] } : p))
       toast.success('Status atualizado com sucesso!')
-      if (selectedPedido?.id === id) {
+      if (selectedPedido?.pedido_id === id) {
         setSelectedPedido(prev => prev ? { ...prev, status: status as Pedido['status'] } : prev)
       }
     }
@@ -323,7 +323,7 @@ export function PedidosPage() {
               </thead>
               <tbody className="divide-y divide-[#F1F5F9]">
                 {filtered.map(pedido => (
-                  <tr key={pedido.id} className="hover:bg-white hover:shadow-[0_0_15px_rgba(255,107,26,0.4)] hover:outline hover:outline-1 hover:outline-[#FF6B1A] transition-all relative z-0 hover:z-10">
+                  <tr key={pedido.pedido_id} className="hover:bg-white hover:shadow-[0_0_15px_rgba(255,107,26,0.4)] hover:outline hover:outline-1 hover:outline-[#FF6B1A] transition-all relative z-0 hover:z-10">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-[#0A2342]/10 flex items-center justify-center text-[#0A2342] text-xs font-bold shrink-0">
@@ -345,13 +345,13 @@ export function PedidosPage() {
                       ) : (
                         <>
                           <button
-                            onClick={() => setExpandedProdutos(expandedProdutos === pedido.id ? null : pedido.id)}
+                            onClick={() => setExpandedProdutos(expandedProdutos === pedido.pedido_id ? null : pedido.pedido_id)}
                             className="flex items-center gap-1 text-[#64748B] hover:text-[#1A1A2E] text-xs"
                           >
                             {Array.isArray(pedido.itens) ? pedido.itens.length : 0} item(s)
-                            <ChevronDown className={clsx('w-3 h-3 transition-transform', expandedProdutos === pedido.id && 'rotate-180')} />
+                            <ChevronDown className={clsx('w-3 h-3 transition-transform', expandedProdutos === pedido.pedido_id && 'rotate-180')} />
                           </button>
-                          {expandedProdutos === pedido.id && (
+                          {expandedProdutos === pedido.pedido_id && (
                             <div className="mt-1 space-y-0.5">
                               {Array.isArray(pedido.itens) && pedido.itens.map((p: any, i: number) => (
                                 <p key={i} className="text-xs text-[#64748B]">

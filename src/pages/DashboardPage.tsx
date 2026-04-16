@@ -287,7 +287,7 @@ export function DashboardPage() {
             <div className="space-y-3">
               {pedidos.map((pedido) => (
                 <div
-                  key={pedido.id}
+                  key={pedido.pedido_id}
                   className="flex items-center gap-3 p-3 rounded-[8px] hover:bg-gray-50 transition-colors"
 
                 >
