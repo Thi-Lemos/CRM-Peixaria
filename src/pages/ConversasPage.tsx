@@ -5,6 +5,7 @@ import { formatTime, getInitials } from '../utils/helpers'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { telegramApi } from '../lib/telegram'
+import { Search, Filter, Send, UserCheck, X } from 'lucide-react'
 
 type StatusFilter = 'todos' | 'bot' | 'humano' | 'encerrado'
 

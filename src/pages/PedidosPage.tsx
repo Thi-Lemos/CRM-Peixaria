@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 import { isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns'
 import clsx from 'clsx'
 import { useNotificationStore } from '../store/notificationStore'
+import { useSearchParams } from 'react-router-dom'
 
 type StatusFilter = 'todos' | 'pendente' | 'enviado' | 'pronto_retirada' | 'finalizado' | 'cancelado'
 type DateFilter = 'todos' | 'hoje' | 'semana' | 'mes'
@@ -158,11 +159,15 @@ function playNotificationSound() {
 }
 
 export function PedidosPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialStatus = (searchParams.get('status') as StatusFilter) || 'todos'
+  const initialDate = (searchParams.get('date') as DateFilter) || 'todos'
+
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [filtered, setFiltered] = useState<Pedido[]>([])
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('todos')
-  const [dateFilter, setDateFilter] = useState<DateFilter>('todos')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(initialStatus)
+  const [dateFilter, setDateFilter] = useState<DateFilter>(initialDate)
   const [selectedPedido, setSelectedPedido] = useState<Pedido | null>(null)
   const [loading, setLoading] = useState(true)
   const [expandedProdutos, setExpandedProdutos] = useState<string | null>(null)
@@ -217,7 +222,17 @@ export function PedidosPage() {
       result = result.filter(p => p.nome.toLowerCase().includes(q))
     }
     setFiltered(result)
-  }, [pedidos, statusFilter, dateFilter, search])
+
+    // Update URL params
+    const params = new URLSearchParams(searchParams)
+    if (statusFilter !== 'todos') params.set('status', statusFilter)
+    else params.delete('status')
+    
+    if (dateFilter !== 'todos') params.set('date', dateFilter)
+    else params.delete('date')
+    
+    setSearchParams(params, { replace: true })
+  }, [pedidos, statusFilter, dateFilter, search, searchParams, setSearchParams])
 
   const handleStatusChange = async (id: string, status: string) => {
     const { error } = await supabase

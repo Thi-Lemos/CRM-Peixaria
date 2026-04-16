@@ -13,7 +13,7 @@ import {
   ArrowRight,
   TrendingUp,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { isToday, parseISO } from 'date-fns'
 
@@ -44,12 +44,16 @@ interface MetricCard {
   iconBg: string
   iconColor: string
   badge?: { label: string; color: string }
+  onClick?: () => void
 }
 
 function MetricCardComponent({ card }: { card: MetricCard }) {
   const Icon = card.icon
   return (
-    <div className="card cursor-pointer hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,107,26,0.4)] hover:border-[#FF6B1A] transition-all duration-300">
+    <div 
+      onClick={card.onClick}
+      className="card cursor-pointer hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,107,26,0.4)] hover:border-[#FF6B1A] transition-all duration-300"
+    >
       <div className="flex items-start justify-between mb-4">
         <div className={`p-3 rounded-xl ${card.iconBg}`}>
           <Icon className={`w-6 h-6 ${card.iconColor}`} />
@@ -86,6 +90,7 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 export function DashboardPage() {
+  const navigate = useNavigate()
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [todayPedidos, setTodayPedidos] = useState<Pedido[]>([])
   const [atendimentos, setAtendimentos] = useState<Atendimento[]>([])
@@ -178,6 +183,7 @@ export function DashboardPage() {
       icon: HeadphonesIcon,
       iconBg: 'bg-blue-50',
       iconColor: 'text-blue-600',
+      onClick: () => navigate('/conversas')
     },
     {
       title: 'Pedidos Dentro do Horário',
@@ -202,6 +208,7 @@ export function DashboardPage() {
       icon: ShoppingBag,
       iconBg: 'bg-purple-50',
       iconColor: 'text-purple-600',
+      onClick: () => navigate('/pedidos?date=hoje')
     },
     {
       title: 'Pedidos Pendentes',
@@ -212,6 +219,7 @@ export function DashboardPage() {
       badge: pedidosPendentes > 0
         ? { label: `${pedidosPendentes} novo${pedidosPendentes > 1 ? 's' : ''}`, color: 'bg-[#FF6B1A] text-white' }
         : undefined,
+      onClick: () => navigate('/pedidos?status=pendente')
     },
     {
       title: 'Faturamento do Dia',
@@ -220,6 +228,7 @@ export function DashboardPage() {
       iconBg: 'bg-[#FF6B1A]/10',
       iconColor: 'text-[#FF6B1A]',
       badge: { label: 'Hoje', color: 'bg-[#FF6B1A]/10 text-[#FF6B1A]' },
+      onClick: () => navigate('/pedidos?date=hoje')
     },
   ]
 
@@ -288,8 +297,10 @@ export function DashboardPage() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-[#1A1A2E] truncate">{pedido.nome}</p>
                     <p className="text-xs text-[#64748B] truncate">
-                      {Array.isArray(pedido.itens) 
-                        ? pedido.itens.map(p => p.produto).join(', ')
+                      {typeof pedido.itens === 'string'
+                        ? pedido.itens
+                        : Array.isArray(pedido.itens) 
+                        ? pedido.itens.map(p => p.produto || p.nome).join(', ')
                         : 'Sem itens'}
                     </p>
                   </div>

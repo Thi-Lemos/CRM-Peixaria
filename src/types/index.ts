@@ -15,14 +15,14 @@ export interface ProdutoPedido {
 
 export interface Pedido {
   id: string
-  nome_cliente: string
-  telefone_cliente?: string
-  produtos_pedidos: ProdutoPedido[]
+  nome: string
+  telefone?: string
+  itens: string | any[]
   valor_total: number
   endereco_entrega?: string
-  forma_pagamento?: string
+  pagamento?: string
   observacoes?: string
-  status: 'pendente' | 'confirmado' | 'pronto_retirada' | 'entregue' | 'cancelado'
+  status: 'pendente' | 'enviado' | 'pronto_retirada' | 'finalizado' | 'cancelado' | string
   created_at: string
   updated_at: string
 }
