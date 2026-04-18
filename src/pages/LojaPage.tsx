@@ -307,14 +307,11 @@ export function LojaPage() {
         {/* Formas de Pagamento */}
         <div className="card">
           <SectionHeader icon={CreditCard} title="Formas de Pagamento" />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {[
               'Dinheiro',
-              'Pix',
-              'Cartão de Débito',
-              'Cartão de Crédito',
-              'Vale Alimentação',
-              'Transferência Bancária'
+              'Cartão',
+              'Pix'
             ].map((forma) => (
               <label key={forma} className="flex items-center gap-3 p-3 border border-[#E2E8F0] rounded-input cursor-pointer hover:bg-gray-50 transition-colors">
                 <input
