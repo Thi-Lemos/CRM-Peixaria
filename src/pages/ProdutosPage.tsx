@@ -6,7 +6,7 @@ import { Plus, Search, Pencil, Trash2, X, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
-const UNIDADES = ['kg', 'g', 'unidade', 'dúzia', 'bandeja', 'filé', 'outro']
+const UNIDADES = ['Kg', 'Unid']
 const CATEGORIAS_SUGESTAO = ['Peixes', 'Frutos do Mar', 'Filés', 'Defumados', 'Congelados', 'Condimentos']
 
 interface ProdutoForm {
@@ -20,7 +20,7 @@ interface ProdutoForm {
 const emptyForm: ProdutoForm = {
   produto: '',
   preco: '',
-  quantidade: 'kg',
+  quantidade: 'Kg',
   categoria: '',
   disponivel: true,
 }
@@ -41,7 +41,7 @@ function ProdutoModal({
       ? {
           produto: produto.produto,
           preco: String(produto.preco),
-          quantidade: produto.quantidade || 'kg',
+          quantidade: produto.quantidade || 'Kg',
           categoria: produto.categoria || '',
           disponivel: produto.disponivel ?? true,
         }
