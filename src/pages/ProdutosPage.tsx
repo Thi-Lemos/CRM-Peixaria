@@ -7,12 +7,14 @@ import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
 const UNIDADES = ['Kg', 'Unid']
+const CORTES = ['Inteiro', 'Filé', '-']
 const CATEGORIAS_SUGESTAO = ['Peixes', 'Frutos do Mar', 'Filés', 'Defumados', 'Congelados', 'Condimentos']
 
 interface ProdutoForm {
   produto: string
   preco: string
   quantidade: string
+  corte: string
   categoria: string
   disponivel: boolean
 }
@@ -21,6 +23,7 @@ const emptyForm: ProdutoForm = {
   produto: '',
   preco: '',
   quantidade: 'Kg',
+  corte: 'Inteiro',
   categoria: '',
   disponivel: true,
 }
@@ -42,6 +45,7 @@ function ProdutoModal({
           produto: produto.produto,
           preco: String(produto.preco),
           quantidade: produto.quantidade || 'Kg',
+          corte: produto.corte || 'Inteiro',
           categoria: produto.categoria || '',
           disponivel: produto.disponivel ?? true,
         }
@@ -59,6 +63,7 @@ function ProdutoModal({
         produto: form.produto.trim(),
         preco: parseFloat(form.preco.replace(',', '.')),
         quantidade: form.quantidade,
+        corte: form.corte,
         categoria: form.categoria.trim() || null,
         disponivel: form.disponivel,
       }
@@ -132,6 +137,19 @@ function ProdutoModal({
                 ))}
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Corte</label>
+            <select
+              value={form.corte}
+              onChange={e => setForm(prev => ({ ...prev, corte: e.target.value }))}
+              className="input-field"
+            >
+              {CORTES.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -339,6 +357,7 @@ export function ProdutosPage() {
               <thead>
                 <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Nome</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Corte</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Preço</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Quantidade</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Categoria</th>
@@ -350,6 +369,7 @@ export function ProdutosPage() {
                 {filtered.map(produto => (
                   <tr key={produto.id} className="hover:bg-[#F8FAFC] transition-colors">
                     <td className="px-4 py-3 font-medium text-[#1A1A2E]">{produto.produto}</td>
+                    <td className="px-4 py-3 text-[#64748B]">{produto.corte || '—'}</td>
                     <td className="px-4 py-3 font-semibold text-[#FF6B1A]">{formatCurrency(produto.preco)}</td>
                     <td className="px-4 py-3 text-[#64748B]">{produto.quantidade || '—'}</td>
                     <td className="px-4 py-3">

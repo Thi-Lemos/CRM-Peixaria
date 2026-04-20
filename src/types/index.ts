@@ -3,6 +3,7 @@ export interface Produto {
   produto: string
   preco: number
   quantidade?: string
+  corte?: string
   categoria?: string
   disponivel?: boolean
 }
