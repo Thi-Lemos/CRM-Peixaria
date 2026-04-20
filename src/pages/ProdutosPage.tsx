@@ -121,7 +121,7 @@ function ProdutoModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Unidade</label>
+              <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Quantidade</label>
               <select
                 value={form.quantidade}
                 onChange={e => setForm(prev => ({ ...prev, quantidade: e.target.value }))}
@@ -340,7 +340,7 @@ export function ProdutosPage() {
                 <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Nome</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Preço</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Unidade</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Quantidade</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Categoria</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Disponível</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Ações</th>
