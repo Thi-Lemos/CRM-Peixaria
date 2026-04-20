@@ -171,7 +171,12 @@ export function PedidosPage() {
   const [selectedPedido, setSelectedPedido] = useState<Pedido | null>(null)
   const [loading, setLoading] = useState(true)
   const [expandedProdutos, setExpandedProdutos] = useState<string | null>(null)
-  const { incrementPendingOrders } = useNotificationStore()
+  const { setPendingOrders, incrementPendingOrders } = useNotificationStore()
+
+  useEffect(() => {
+    const pending = pedidos.filter(p => p.status === 'pendente').length
+    setPendingOrders(pending)
+  }, [pedidos, setPendingOrders])
 
   const fetchPedidos = useCallback(async () => {
     setLoading(true)

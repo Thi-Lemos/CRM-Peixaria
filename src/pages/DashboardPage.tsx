@@ -98,23 +98,30 @@ export function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const { setPendingOrders, incrementPendingOrders } = useNotificationStore()
 
+  useEffect(() => {
+    const pending = pedidos.filter(p => p.status === 'pendente').length
+    setPendingOrders(pending)
+  }, [pedidos, setPendingOrders])
+
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       const [pedidosRes, atendimentosRes, conversasRes] = await Promise.all([
         supabase.from('pedidos').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('atendimentos').select('*').order('data_atendimento', { ascending: false }).limit(200),
-        supabase.from('conversas').select('*').order('updated_at', { ascending: false }).limit(5),
+        supabase.from('conversas').select('*').order('updated_at', { ascending: false }),
       ])
 
       const allPedidos = (pedidosRes.data ?? []) as Pedido[]
       const today = allPedidos.filter(p => isToday(parseISO(p.created_at)))
+      const allConversas = (conversasRes.data ?? []) as Conversa[]
+      
       setPedidos(allPedidos.slice(0, 5))
       setTodayPedidos(today)
       setAtendimentos((atendimentosRes.data ?? []) as Atendimento[])
-      setConversas((conversasRes.data ?? []) as Conversa[])
+      setConversas(allConversas)
 
-      const pending = today.filter(p => p.status === 'pendente').length
+      const pending = allPedidos.filter(p => p.status === 'pendente').length
       setPendingOrders(pending)
     } finally {
       setLoading(false)
@@ -125,15 +132,20 @@ export function DashboardPage() {
     fetchData()
 
     // Realtime - novos pedidos
-    const channel = supabase
+    const pedidosChannel = supabase
       .channel('pedidos-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedidos' }, (payload) => {
         const newPedido = payload.new as Pedido
         setPedidos(prev => [newPedido, ...prev.slice(0, 4)])
         if (isToday(parseISO(newPedido.created_at))) {
           setTodayPedidos(prev => [newPedido, ...prev])
+        }
+        
+        // Atualizar count global se for pendente
+        if (newPedido.status === 'pendente') {
           incrementPendingOrders()
         }
+
         playNotificationSound()
         toast.success(`🔔 Novo pedido de ${newPedido.nome}!`, {
           duration: 5000,
@@ -148,6 +160,30 @@ export function DashboardPage() {
           })
         }
       })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos' }, (payload) => {
+        const updated = payload.new as Pedido
+        setPedidos(prev => prev.map(p => p.pedido_id === updated.pedido_id ? updated : p))
+        if (isToday(parseISO(updated.created_at))) {
+          setTodayPedidos(prev => prev.map(p => p.pedido_id === updated.pedido_id ? updated : p))
+        }
+        
+        // Recalcular pendentes após update
+        fetchData() 
+      })
+      .subscribe()
+
+    // Realtime - conversas
+    const conversasChannel = supabase
+      .channel('conversas-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'conversas' }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setConversas(prev => [payload.new as Conversa, ...prev])
+        } else if (payload.eventType === 'UPDATE') {
+          setConversas(prev => prev.map(c => c.id === payload.new.id ? payload.new as Conversa : c))
+        } else if (payload.eventType === 'DELETE') {
+          setConversas(prev => prev.filter(c => c.id === payload.old.id))
+        }
+      })
       .subscribe()
 
     // Solicitar permissão de notificação
@@ -156,7 +192,8 @@ export function DashboardPage() {
     }
 
     return () => {
-      supabase.removeChannel(channel)
+      supabase.removeChannel(pedidosChannel)
+      supabase.removeChannel(conversasChannel)
     }
   }, [fetchData, incrementPendingOrders])
 
@@ -169,6 +206,9 @@ export function DashboardPage() {
   const pedidosForaHorario = todayPedidos.length - pedidosDentroHorario;
   
   const pedidosPendentes = todayPedidos.filter(p => p.status === 'pendente').length
+  const totalPedidosPendentes = pedidos.filter(p => p.status === 'pendente').length
+  const conversasAtivas = conversas.filter(c => c.status !== 'encerrado').length
+  const pedidosHojeValidos = todayPedidos.filter(p => p.status !== 'cancelado').length
   const pedidosEnviados = todayPedidos.filter(p => p.status === 'enviado').length
   const pedidosFinalizados = todayPedidos.filter(p => p.status === 'finalizado').length
   const faturamento = todayPedidos
@@ -177,9 +217,9 @@ export function DashboardPage() {
 
   const metricCards: MetricCard[] = [
     {
-      title: 'Atendimentos Hoje',
-      value: todayAtendimentos.length,
-      subInfo: 'Conversas iniciadas no bot',
+      title: 'Atendimentos Ativos',
+      value: conversasAtivas,
+      subInfo: 'Conversas no bot ou humano',
       icon: HeadphonesIcon,
       iconBg: 'bg-blue-50',
       iconColor: 'text-blue-600',
@@ -203,7 +243,7 @@ export function DashboardPage() {
     },
     {
       title: 'Pedidos Hoje',
-      value: todayPedidos.length,
+      value: pedidosHojeValidos,
       subInfo: `${pedidosPendentes} pendentes • ${pedidosFinalizados} finalizados`,
       icon: ShoppingBag,
       iconBg: 'bg-purple-50',
@@ -212,12 +252,12 @@ export function DashboardPage() {
     },
     {
       title: 'Pedidos Pendentes',
-      value: pedidosPendentes,
+      value: totalPedidosPendentes,
       icon: Clock,
       iconBg: 'bg-yellow-50',
       iconColor: 'text-yellow-600',
-      badge: pedidosPendentes > 0
-        ? { label: `${pedidosPendentes} novo${pedidosPendentes > 1 ? 's' : ''}`, color: 'bg-[#FF6B1A] text-white' }
+      badge: totalPedidosPendentes > 0
+        ? { label: `${totalPedidosPendentes} pendente${totalPedidosPendentes > 1 ? 's' : ''}`, color: 'bg-[#FF6B1A] text-white' }
         : undefined,
       onClick: () => navigate('/pedidos?status=pendente')
     },
@@ -337,7 +377,7 @@ export function DashboardPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {conversas.map((c) => (
+              {conversas.slice(0, 5).map((c) => (
                 <div
                   key={c.id}
                   className="flex items-center gap-3 p-3 rounded-[8px] hover:bg-gray-50 transition-colors"
