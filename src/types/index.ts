@@ -20,7 +20,7 @@ export interface Pedido {
   telefone?: string
   itens: string | any[]
   valor_total: number
-  endereco_entrega?: string
+  endereco?: string
   pagamento?: string
   observacoes?: string
   status: 'pendente' | 'enviado' | 'pronto_retirada' | 'finalizado' | 'cancelado' | string

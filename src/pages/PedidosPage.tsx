@@ -97,10 +97,10 @@ function PedidoModal({ pedido, onClose, onStatusChange }: {
                 <p className="font-medium text-[#1A1A2E]">{pedido.pagamento}</p>
               </div>
             )}
-            {pedido.endereco_entrega && (
+            {pedido.endereco && (
               <div>
                 <p className="text-xs text-[#64748B] mb-0.5">Endereço</p>
-                <p className="font-medium text-[#1A1A2E]">{pedido.endereco_entrega}</p>
+                <p className="font-medium text-[#1A1A2E]">{pedido.endereco}</p>
               </div>
             )}
             {pedido.observacoes && (
@@ -328,7 +328,7 @@ export function PedidosPage() {
               </thead>
               <tbody className="divide-y divide-[#F1F5F9]">
                 {filtered.map(pedido => (
-                  <tr key={pedido.pedido_id} className="hover:bg-white hover:shadow-[0_0_15px_rgba(255,107,26,0.4)] hover:outline hover:outline-1 hover:outline-[#FF6B1A] transition-all relative z-0 hover:z-10">
+                  <tr key={pedido.pedido_id} onClick={() => setSelectedPedido(pedido)} className="cursor-pointer hover:bg-white hover:shadow-[0_0_15px_rgba(255,107,26,0.4)] hover:outline hover:outline-1 hover:outline-[#FF6B1A] transition-all relative z-0 hover:z-10">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-[#0A2342]/10 flex items-center justify-center text-[#0A2342] text-xs font-bold shrink-0">
@@ -350,7 +350,7 @@ export function PedidosPage() {
                       ) : (
                         <>
                           <button
-                            onClick={() => setExpandedProdutos(expandedProdutos === pedido.pedido_id ? null : pedido.pedido_id)}
+                            onClick={(e) => { e.stopPropagation(); setExpandedProdutos(expandedProdutos === pedido.pedido_id ? null : pedido.pedido_id); }}
                             className="flex items-center gap-1 text-[#64748B] hover:text-[#1A1A2E] text-xs"
                           >
                             {Array.isArray(pedido.itens) ? pedido.itens.length : 0} item(s)
@@ -384,7 +384,7 @@ export function PedidosPage() {
                     </td>
                     <td className="px-4 py-3">
                       <button
-                        onClick={() => setSelectedPedido(pedido)}
+                        onClick={(e) => { e.stopPropagation(); setSelectedPedido(pedido); }}
                         className="p-1.5 text-[#64748B] hover:text-[#0A2342] hover:bg-blue-50 rounded-[6px] transition-colors"
                         title="Ver detalhes"
                       >
