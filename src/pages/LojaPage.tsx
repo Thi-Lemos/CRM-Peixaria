@@ -160,8 +160,9 @@ export function LojaPage() {
 
       if (error) throw error
       toast.success('Configurações salvas com sucesso!')
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao salvar configurações')
+    } catch (err: any) {
+      console.error('Erro ao salvar:', err)
+      toast.error(`Erro: ${err?.message || err?.details || JSON.stringify(err)}`)
     } finally {
       setSaving(false)
     }
