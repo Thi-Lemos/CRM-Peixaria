@@ -229,30 +229,7 @@ export function LojaPage() {
                 className="input-field resize-none"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Raio de Entrega (km)</label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                value={config.raio_entrega_km || ''}
-                onChange={e => setConfig(prev => ({ ...prev, raio_entrega_km: parseFloat(e.target.value) || undefined }))}
-                placeholder="5"
-                className="input-field"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Taxa de Entrega (R$)</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                value={config.taxa_entrega || ''}
-                onChange={e => setConfig(prev => ({ ...prev, taxa_entrega: parseFloat(e.target.value) || undefined }))}
-                placeholder="0,00"
-                className="input-field"
-              />
-            </div>
+
           </div>
         </div>
 
