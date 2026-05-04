@@ -14,8 +14,6 @@ CREATE TABLE IF NOT EXISTS loja_config (
   formas_pagamento TEXT[],
   chaves_pix JSONB,
   politicas TEXT,
-  raio_entrega_km DECIMAL(5,2),
-  taxa_entrega DECIMAL(10,2),
   taxas_entrega JSONB DEFAULT '[]'::jsonb,
   telefone TEXT,
   updated_at TIMESTAMPTZ DEFAULT now()

@@ -90,8 +90,6 @@ export interface LojaConfig {
   formas_pagamento?: string[]
   chaves_pix?: ChavePix[]
   politicas?: string
-  raio_entrega_km?: number
-  taxa_entrega?: number
   taxas_entrega?: TaxaEntrega[]
   telefone?: string
   updated_at?: string

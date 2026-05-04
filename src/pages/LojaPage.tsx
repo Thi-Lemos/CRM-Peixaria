@@ -64,8 +64,6 @@ export function LojaPage() {
     formas_pagamento: [],
     chaves_pix: [],
     politicas: '',
-    raio_entrega_km: undefined,
-    taxa_entrega: undefined,
     taxas_entrega: [],
   })
   const [loading, setLoading] = useState(true)
