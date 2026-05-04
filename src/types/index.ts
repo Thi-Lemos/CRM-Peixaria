@@ -76,6 +76,11 @@ export interface ChavePix {
   chave: string
 }
 
+export interface TaxaEntrega {
+  bairro: string
+  taxa: number
+}
+
 export interface LojaConfig {
   id?: string
   nome?: string
@@ -87,6 +92,7 @@ export interface LojaConfig {
   politicas?: string
   raio_entrega_km?: number
   taxa_entrega?: number
+  taxas_entrega?: TaxaEntrega[]
   telefone?: string
   updated_at?: string
 }

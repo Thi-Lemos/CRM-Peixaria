@@ -66,6 +66,7 @@ export function LojaPage() {
     politicas: '',
     raio_entrega_km: undefined,
     taxa_entrega: undefined,
+    taxas_entrega: [],
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -73,6 +74,8 @@ export function LojaPage() {
   const [novaFormaPgto, setNovaFormaPgto] = useState('')
   const [novaPixTipo, setNovaPixTipo] = useState('')
   const [novaPixChave, setNovaPixChave] = useState('')
+  const [novoBairro, setNovoBairro] = useState('')
+  const [novaTaxa, setNovaTaxa] = useState('')
 
   useEffect(() => {
     const fetchConfig = async () => {
@@ -85,6 +88,7 @@ export function LojaPage() {
           servicos: data.servicos || [],
           formas_pagamento: data.formas_pagamento || [],
           chaves_pix: data.chaves_pix || [],
+          taxas_entrega: data.taxas_entrega || [],
         })
       }
       setLoading(false)
@@ -128,6 +132,23 @@ export function LojaPage() {
 
   const removePix = (i: number) => {
     setConfig(prev => ({ ...prev, chaves_pix: (prev.chaves_pix || []).filter((_, idx) => idx !== i) }))
+  }
+
+  const addTaxa = () => {
+    if (!novoBairro.trim() || !novaTaxa.trim()) return
+    const taxaValue = parseFloat(novaTaxa.replace(',', '.'))
+    if (isNaN(taxaValue)) return
+
+    setConfig(prev => ({
+      ...prev,
+      taxas_entrega: [...(prev.taxas_entrega || []), { bairro: novoBairro.trim(), taxa: taxaValue }],
+    }))
+    setNovoBairro('')
+    setNovaTaxa('')
+  }
+
+  const removeTaxa = (i: number) => {
+    setConfig(prev => ({ ...prev, taxas_entrega: (prev.taxas_entrega || []).filter((_, idx) => idx !== i) }))
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -387,29 +408,51 @@ export function LojaPage() {
 
         {/* Entrega */}
         <div className="card">
-          <SectionHeader icon={MapPin} title="Configuração de Entrega" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5 font-semibold">Raio de Entrega (km)</label>
-              <input
-                type="number"
-                value={config.raio_entrega_km || ''}
-                onChange={e => setConfig(prev => ({ ...prev, raio_entrega_km: parseFloat(e.target.value) }))}
-                placeholder="Ex: 5"
-                className="input-field"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5 font-semibold">Taxa de Entrega (R$)</label>
-              <input
-                type="number"
-                step="0.01"
-                value={config.taxa_entrega || ''}
-                onChange={e => setConfig(prev => ({ ...prev, taxa_entrega: parseFloat(e.target.value) }))}
-                placeholder="Ex: 10.00"
-                className="input-field"
-              />
-            </div>
+          <SectionHeader icon={MapPin} title="Configuração de Entrega (por Bairro)" />
+          
+          <div className="space-y-3 mb-4">
+            {(config.taxas_entrega || []).map((t, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="flex-1 bg-[#F8FAFC] p-2 border border-[#E2E8F0] rounded-input text-sm font-medium">
+                  {t.bairro}
+                </div>
+                <div className="w-32 bg-[#F8FAFC] p-2 border border-[#E2E8F0] rounded-input text-sm text-center">
+                  R$ {t.taxa.toFixed(2)}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeTaxa(i)}
+                  className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            {(config.taxas_entrega || []).length === 0 && (
+              <p className="text-sm text-[#94A3B8] italic">Nenhuma taxa de entrega configurada.</p>
+            )}
+          </div>
+          
+          <div className="flex flex-col md:flex-row gap-2 pt-3 border-t border-dashed border-[#E2E8F0]">
+            <input
+              type="text"
+              value={novoBairro}
+              onChange={e => setNovoBairro(e.target.value)}
+              placeholder="Nome do Bairro"
+              className="input-field flex-1"
+            />
+            <input
+              type="number"
+              step="0.01"
+              value={novaTaxa}
+              onChange={e => setNovaTaxa(e.target.value)}
+              placeholder="Taxa (R$)"
+              className="input-field md:w-32"
+            />
+            <button type="button" onClick={addTaxa} className="btn-secondary whitespace-nowrap">
+              <Plus className="w-4 h-4" />
+              Adicionar
+            </button>
           </div>
         </div>
 

@@ -1,10 +1,38 @@
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Menu } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 
 export function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  useEffect(() => {
+    // Listener global para novos pedidos
+    const channel = supabase
+      .channel('global-pedidos-listener')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedidos' }, async (payload) => {
+        const novoPedido = payload.new
+        if (novoPedido.telefone_cliente || novoPedido.telefone) {
+          const telefone = novoPedido.telefone_cliente || novoPedido.telefone
+          // Encerrar a conversa associada
+          const { error } = await supabase
+            .from('conversas')
+            .update({ status: 'encerrado', updated_at: new Date().toISOString() })
+            .eq('telefone', telefone)
+            .neq('status', 'encerrado')
+            
+          if (error) {
+            console.error('Erro ao encerrar conversa automaticamente:', error)
+          }
+        }
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [])
 
   return (
     <div className="flex bg-[#F4F6F9] min-h-screen">
